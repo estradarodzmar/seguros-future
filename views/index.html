@@ -1,16 +1,148 @@
-<!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Go Live Server - Proyecto</title>
-        <link rel="stylesheet" href="/style/styles.css">
-    </head>
-    <body>
-        <h1>¡Bienvenido a Go Live Server!</h1>
-        <p>Tu servidor de desarrollo está funcionando correctamente.</p>
-        <p>Edita este archivo en <code>views/index.html</code> para comenzar.</p>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Portal Seguros - Purple Edition</title>
+  <link rel="stylesheet" href="style\styles.css">
+</head>
+<body>
+
+  <nav class="top-bar">
+    <a href="#" class="brand">
+      <span style="font-size:1.5em;">🛡️</span> SEGUROS<span style="color:#fff">FUTURE</span>
+    </a>
+    <div class="nav-links">
+      <a href="#calculadora">Cotizador</a>
+      <a href="#polizas">Mis Pólizas</a>
+      <a href="#siniestros">Reportar Siniestro</a>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <section id="calculadora">
+      <h2>📟 Analizador de Riesgo</h2>
+      <div class="card calc-grid">
+        <div>
+          <div class="input-group">
+            <label>Edad del Conductor</label>
+            <input type="number" id="edad" value="30">
+            <input type="range" id="edadRange" min="18" max="90" value="30">
+          </div>
+          <div class="input-group">
+            <label>Kilometraje Anual Promedio (km)</label>
+            <input type="number" id="kms" value="15000">
+            <input type="range" id="kmsRange" min="0" max="100000" value="15000" step="1000">
+          </div>
+          <div class="input-group">
+            <label>Historial de Infracciones (últimos 3 años)</label>
+            <select id="infracciones">
+              <option value="0">0 Infracciones</option>
+              <option value="1">1 Infracción</option>
+              <option value="2">2 Infracciones</option>
+              <option value="3">3 o más (Alto Riesgo)</option>
+            </select>
+          </div>
+          <button class="btn" onclick="calcularRiesgo()">Analizar Perfil</button>
+        </div>
+
+        <div class="thermometer-wrapper">
+          <label style="color:var(--text-muted); margin-bottom:10px;">Nivel de Riesgo Detectado</label>
+          
+          <div class="thermometer-container">
+            <div class="thermometer-liquid" id="liquido"></div>
+          </div>
+          <div class="bulb" id="bulbo"></div>
+
+          <div class="score-display" id="scoreText">0%</div>
+          <p id="mensajeRiesgo" style="color:var(--accent)">Esperando datos...</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="polizas">
+      <h2>📂 Mis Pólizas Activas</h2>
+      <div class="policies-grid">
         
-    </body>
-    </html>
+        <div class="policy-card">
+          <span class="status">ACTIVA</span>
+          <h3>Auto Premium</h3>
+          <p style="color:var(--text-muted)">Nissan Versa 2023</p>
+          <p><strong>Vence:</strong> 12/Nov/2026</p>
+          <button class="btn secondary" style="margin-top:10px" onclick="descargarPoliza('Auto Premium')">⬇ Descargar PDF</button>
+        </div>
+
+        <div class="policy-card">
+          <span class="status">ACTIVA</span>
+          <h3>Gastos Médicos Mayores</h3>
+          <p style="color:var(--text-muted)">Titular + 2 Beneficiarios</p>
+          <p><strong>Vence:</strong> 01/Ene/2026</p>
+          <button class="btn secondary" style="margin-top:10px" onclick="descargarPoliza('GMM Familiar')">⬇ Descargar PDF</button>
+        </div>
+
+        <div class="policy-card" style="border-left-color: var(--danger)">
+          <span class="status" style="color:var(--danger); background:rgba(255,23,68,0.2)">PENDIENTE PAGO</span>
+          <h3>Seguro de Hogar</h3>
+          <p style="color:var(--text-muted)">Cobertura Total</p>
+          <p><strong>Vence:</strong> 30/Nov/2025</p>
+          <button class="btn" style="margin-top:10px; background:var(--danger); color:white;" onclick="pagar()">💳 Pagar Ahora</button>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="siniestros">
+      <h2>🚨 Reporte de Siniestros Express</h2>
+      <div class="card">
+        <form id="claimForm" onsubmit="reportarSiniestro(event)">
+          <div class="form-row">
+            <div class="input-group">
+              <label>Seleccionar Póliza Afectada</label>
+              <select required>
+                <option value="">-- Seleccione --</option>
+                <option>Auto Premium - Nissan Versa</option>
+                <option>Hogar - Calle Reforma #123</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>Fecha del Incidente</label>
+              <input type="date" required>
+            </div>
+          </div>
+          
+          <div class="input-group">
+            <label>Descripción de los hechos</label>
+            <textarea rows="4" placeholder="Describa brevemente qué sucedió..." required></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+               <label>Ubicación (Opcional)</label>
+               <input type="text" placeholder="Calle, Cruce o Coordenadas">
+            </div>
+             <div class="input-group" style="display:flex; align-items:flex-end;">
+               <button type="button" class="btn secondary" onclick="alert('📸 Cámara activada (Simulación)')">📷 Subir Fotos</button>
+             </div>
+          </div>
+
+          <button type="submit" class="btn">ENVIAR REPORTE DE EMERGENCIA</button>
+        </form>
+
+        <div id="successMessage" class="success-msg">
+          <strong>✅ Reporte Enviado con Éxito</strong><br>
+          Un ajustador se pondrá en contacto contigo en menos de 15 minutos. Folio: <span id="folio"></span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Derechos Reservados <span>Rodzmar.tech | MarSolutions</span></p>
+  </footer>
+
+  <script src="js\script.js"></script>
+</body>
+</html>
       
